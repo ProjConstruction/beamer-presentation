@@ -1,0 +1,658 @@
+\documentclass[9pt]{beamer}
+
+\mode<presentation> {
+
+\usetheme{Madrid}
+
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amscd}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{lscape}
+\usepackage{xypic}
+\usepackage{comment}
+\usepackage{amscd}
+\usepackage{wasysym}  
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{appendix}
+\usepackage{geometry}
+\usepackage[nice]{nicefrac}
+\usepackage{dsfont, stmaryrd}
+\usepackage{array}
+\newcommand{\nc}{\newcommand}
+\newtheorem{prop}[theorem]{Proposition}
+
+\newtheorem{theo}[theorem]{Theorem}
+
+\newtheorem{coro}[theorem]{Corollary}
+
+\newtheorem{defi}[theorem]{Definition}
+
+
+\newtheorem{exam}[theorem]{Example}
+
+
+\nc{\Spec}{{{\mathrm{Spec}}}}
+\nc{\Hom}{{{\mathrm{Hom}}}}
+\nc{\homm}{{\underline{\mathrm{Hom}}}}
+\nc{\frakg}{{\mathfrak{g}}}
+\nc{\fm}{{\mathfrak{m}}}
+\nc{\fa}{{\mathfrak{a}}}
+\nc{\calA}{{\mathcal A}}
+\nc{\calB}{{\mathcal B}}
+\nc{\calC}{{\mathcal C}}
+\nc{\calD}{{\mathcal D}}
+\nc{\calE}{{\mathcal E}}
+\nc{\calF}{{\mathcal F}}
+\nc{\calG}{{\mathcal G}}
+\nc{\calH}{{\mathcal H}}
+\nc{\calI}{{\mathcal I}}
+\nc{\calJ}{{\mathcal J}}
+\nc{\calK}{{\mathcal K}}
+\nc{\calL}{{\mathcal L}}
+\nc{\calM}{{\mathcal M}}
+\nc{\calN}{{\mathcal N}}
+\nc{\calO}{{\mathcal O}}
+\nc{\calP}{{\mathcal P}} 
+\nc{\calQ}{{\mathcal Q}} 
+\nc{\Q}{{\mathbb Q}}
+\nc{\R}{{\mathbb R}}
+\nc{\calS}{{\mathcal S}}
+\nc{\calT}{{\mathcal T}}
+\nc{\calU}{{\mathcal U}}
+\nc{\calV}{{\mathcal V}}
+\nc{\calW}{{\mathcal W}}
+\nc{\calX}{{\mathcal X}}
+\nc{\calY}{{\mathcal Y}}
+
+\nc{\bbZ}{{\mathbb{Z}}}
+\nc{\zp}{{\mathbb{Z}_p}}
+
+\nc{\bbN}{{\mathbb{N}}}
+
+\nc{\fp}{{\mathfrak{p}}}
+
+\nc{\fq}{{\mathfrak{q}}}
+
+
+\nc{\proj}{{\mathrm{Proj}}}
+
+
+\nc{\N}{{\mathbb{N}}}
+
+\nc{\bbP}{{\mathbb{P}}}
+\nc{\Z}{{\mathbb{Z}}}
+\nc{\C}{{\mathbb{C}}}
+\nc{\Gm}{{\mathbb{G}_m}}
+\nc{\Aa}{{\mathbb{A}}}
+
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[ Proj and Formalisation]{$~~~~$ Formalising the Multigraded Proj Construction in Lean 4. $~~~~$\\ }
+
+\author{Arnaud Mayeux and Jujian Zhang } 
+\institute[] 
+{
+\\ 
+\medskip
+\textit{} 
+}
+\date{Formalisation of mathematics with interactive theorem provers  \\ Thursday 19 June 2025 } 
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{Introduction}
+Inspired by projective geometry, Grothendieck defined the Proj scheme of a $\bbN$-graded ring $A$. This is a well-known construction that every mathematician in scheme theory know and that is explained in most books about algebraic geometry. 
+
+
+\[
+\includegraphics[scale=0.24]{p1.png} \]\[  \mathrm{Proj} (\mathbb{R}[X,Y])
+\]
+\[deg(X)=deg(Y)=1\]
+\end{frame}
+\begin{frame}
+
+
+\includegraphics[scale=0.6]{EGA1961.png}
+
+\includegraphics[scale=0.6]{captureEGA1961.png}
+
+\end{frame}
+
+\begin{frame}
+In Hartshorne: 
+
+\[\includegraphics[scale=0.4]{captureHartshorne.png}\]
+
+\[\includegraphics[scale=0.4]{captureHartshorne2.png}\]
+\end{frame}
+\begin{frame}
+Similar treatments appear in:
+
+$~~$
+
+-A. Ducros: "Introduction à la théorie des schémas" (Msc course 2021 Paris)
+
+$~~$
+
+-R. Vakil : "THE RISING SEA Foundations of Algebraic Geometry" (Msc book course 2024 Stanford)
+
+$~~$
+
+-Görtz-Wedhorn: "Algebraic Geometry I: Schemes " (Msc book course 2010)
+
+$~~$
+
+-Eisenbud-Harris: "The geometry of schemes" (Msc book course 2000)
+
+
+$~~$
+
+-Qing Liu: "Algebraic Geometry and Arithmetic Curves" (Msc book course 2002)
+
+$~~$
+
+-Stacks Project 
+
+$~~$
+
+
+-...
+
+
+
+Beyond the definition of Proj, all these treatments also study quasi-coherent sheaves and twisting sheaves on Proj and use Proj to define "blowups."  
+
+This construction was formalised by J. Zhang in Lean. 
+
+So it seems it is the end of this Proj story. 
+
+But...
+\end{frame}
+ \begin{frame}
+Question: Why Grothendieck assume that $A$ is $\bbN$-graded instead of graded by a general commutative monoid or group ? 
+
+$~$
+
+Answer: No reason from the point of view of Grothendieck scheme theory, in fact Brenner-Schröer defined the Proj of a ring graded by an arbitrary finitely generated abelian group $M$.
+
+$~~$
+\[
+\includegraphics[scale=0.5]{BS.png}\]
+\[
+\includegraphics[scale=0.6]{captureBS.png}
+\]
+None of the above references mention Brenner-Schröer work. 
+
+Goal of this talk: discuss Brenner-Schröer construction, new results and formalization. 
+\end{frame}
+
+
+
+\begin{frame}{References for this talk }
+
+$~~$
+
+H. Brenner and S. Schr\"oer, Ample families, multihomogeneous spectra, and algebraization of formal schemes, Pacific J. Math. {\bf 208} (2003), no.~2, 209--230.
+
+$~~$
+
+A. Mayeux and S. Riche, On multi-graded Proj schemes, to appear in P.R.I.M.S., Kyoto University
+
+$~~$
+
+
+A. Mayeux and J. Zhang, Multi-graded Proj construction in Lean4, https://github.com/ProjConstruction/Proj 
+
+$~~$
+
+J. Zhang, Formalising the Proj construction in Lean, in {\it 14th International Conference on Interactive Theorem Proving}, Art. No. 35, LIPIcs. Leibniz Int. Proc. Inform., 268.
+\end{frame}
+
+
+\begin{frame}{Why formalizing? }
+
+- Being sure that there is no error (rigor).
+
+$~~$
+
+$~~$
+
+- Provide data for future AI-mathematics.
+
+
+
+
+\end{frame}
+
+
+\begin{frame}{Graded localization}
+If a given commutative ring $A$ is $M$-graded for some abelian group $M$, we will say that a multiplicative subset is homogeneous if it consists of homogeneous elements. 
+
+If $A$ is a commutative $M$-graded ring and $S \subset A$ is a homogeneous multiplicative subset, the localization $A_S$ of $A$ with respect to $S$ is canonically $M$-graded, explicitly, for $m \in M$ we have
+\[
+( A_S)_m =  \left\{ \frac{a}{s} : \exists m', m'' \in M \text{ such that }  a \in A_{m'}, \, s \in (S \cap A_{m''}) \text{ and
+$m'-m'' =m$ }\right\}.
+%\subset A_S.
+\]
+Given a graded $A$-module $Q$, one can also consider the associated localization $Q_S$, which has a natural structure of a graded $A_S$-module.
+
+Given a homogeneous multiplicative subset $S \subset A$, we will denote by $\underline{S}$ the homogeneous multiplicative subset consisting of homogeneous divisors of elements in $S$. Note that we have a canonical isomorphism of graded rings
+\begin{equation}
+\label{eqn:isom-localizations}
+ A_{ \underline{S}} \cong A_{S}.
+\end{equation}
+If $Q$ is a graded $A$-module we also have a canonical identification of graded abelian groups 
+\begin{equation}
+\label{eqn:isom-localizations-modules}
+Q_{\underline{S}} \cong Q_S
+\end{equation}
+compatible with the actions of $A_{ \underline{S}} = A_{S}$.
+
+\end{frame}
+
+
+\begin{frame}
+
+
+Consider an abelian group $M$, and a commutative $M$-graded ring $A$. 
+
+ \begin{block}{Definition}
+ Let $S$ be a homogeneous subset of $A$. We denote by $\deg(S)$ the subset of $M$ defined as 
+\[\deg(S):= \{ m \in M : \exists s \in S , s  \in A_m \}. \]
+ \end{block} 
+Note that $\deg(\{0\})=M$.
+More generally, if $S$ is a homogeneous multiplicative subset of $A$, then $\deg(S)$ is a submonoid of $M$, also denoted $M[S\rangle$.
+
+\begin{block}{Definition}
+Let $S$ be a homogeneous multiplicative subset of $A$. 
+ We put $M[S]=M[S \rangle^{\mathrm{gp}}= M[S \rangle- M[S \rangle$, the subgroup of $M$ generated by $\deg(S)$.
+
+\end{block}
+
+
+\begin{block}{Definition (Relevant)}
+\begin{enumerate} \item 
+ A homogeneous multiplicative subset $S$ of $A$ is called \emph{$M$-relevant} (or just \emph{relevant} if $M$ is clear from the context) if for any $m$ in $M$ there exists $n \in \bbZ_{> 0}$ such that $nm$ belongs to $M[\underline{S}]$, i.e. if $M/(M[\underline{S}])$ is a torsion abelian group.
+
+ \item
+ A family $\{a_i : i \in I\}$ of homogeneous elements in $A$ is called $M$-relevant if the multiplicative subset generated by the $a_i$'s is relevant.
+ \item
+ A homogeneous element $a \in A$ is called $M$-relevant if the family $\{a\}$ is $M$-relevant.
+\end{enumerate}\end{block}
+
+\end{frame}
+
+
+\begin{frame}
+
+
+Let $M$ be an abelian group, and let $A$ be a commutative $M$-graded ring.
+
+Let $S$ be a homogeneous multiplicative subset of $A$. \begin{block}{Definition}
+\begin{enumerate}
+\item
+The degree-$0$ part $(A_S)_0$ of the localization $A_{S}$ is denoted $A_{(S)}$ and is called the \emph{potion} of $A$ with respect to $S$. 
+\item
+If $Q$ is a graded $A$-module, we will also denote by $Q_{(S)}$ the degree-$0$ part $(Q_S)_0$ of $Q_S$; it admits a canonical structure of an $A_{(S)}$-module.
+\end{enumerate}
+\end{block}
+
+
+We have canonical identifications
+$A_{(\underline{S})} \cong A_{(S)}$ and $Q_{(\underline{S})} \cong Q_{(S)}$.
+If  $\{a_i : i \in I \}$ is a family of homogeneous elements of $A$, we will denote by
+$A_{(\{a_i : i \in I \})}$
+the potion associated with the multiplicative subset of $A$ generated by $\{a_i : i \in I \}$; in case $\#I=1$ we will write $A_{(a)}$ for $A_{(\{a\})}$.
+
+If $S$ and $T$ are multiplicative subsets of $A$, we will denote by $ST$ the multiplicative subset of $A$ generated by $S \cup T$, i.e. $ST = \{st : s \in S, \, t \in T \}$. Of course, $ST$ is homogeneous if $S$ and $T$ are.\end{frame}\begin{frame}
+The following is the key result that makes the Proj construction work.
+
+\begin{block}{Proposition (Magic of potions)}
+\label{prop:magical} 
+Let $S$ and $T$ be homogeneous multiplicative subsets of $A$. 
+\begin{enumerate}
+\item 
+\label{it:magic-1}
+We have a canonical homomorphism of potion rings 
+
+$A_{(S )} \to  A_{(ST )}$.
+%\]
+\item 
+\label{it:magic-2}
+Assume that $S$ is relevant. Fix a subset $T' \subset T$ which generates $T$ as a submonoid of $(A,\times)$ and, for any $t $ in $T'$, fix $n_t \in \mathbb{N}_{>0}$ and $s_t, s_t' \in \underline{S}$ such that $\deg(t^{n_t}) = \deg(s_t)-\deg(s_t')$.
+%$t^{n_t} \smile s_t$. 
+Then $\frac{t^{n_t} s_t'} { s_t}$ belongs to $A_{(\underline{S} )}=A_{(S)}$. 
+ Moreover we have a canonical isomorphism of $A_{(S )}$-algebras between $ A_{(ST )}$ and the localization of $A_{(S )}$ with respect to the multiplicative subset of $A_{(S)}$ generated by $\{\frac{t^{n_t} s_t'} { s_t} : t \in T' \}$.
+\item 
+\label{it:magic-3}
+Assume that $S$ is relevant and that $T$ is finitely generated as submonoid of $(A,\times)$. The morphism of schemes 
+$
+\mathrm{Spec} (A_{(ST )}) \to \mathrm{Spec} (A_{(S)})
+$
+induced by the ring homomorphism in~\eqref{it:magic-1} is an open immersion of schemes.
+\item 
+\label{it:magic-4}
+Let $f_1, \ldots, f_n \in A$ be nonzero relevant homogeneous elements of the same degree.
+Then we have a canonical open immersion
+\[
+\Spec(A_{ (f_1 + \cdots + f_n) }) \to \Spec (A_{(f_1)}) \cup \cdots \cup \Spec (A_{(f_n)})
+\]
+where the right-hand side is defined as the glueing of the affine schemes $\Spec (A_{(f_i)})$ along the open subschemes $\Spec (A_{(f_i \cdot f_j)}) \subset \Spec (A_{(f_i)})$ (see~\eqref{it:magic-3}).
+
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}
+
+
+From now on we assume that $M$ is a \emph{finitely generated} abelian group, and fix a commutative $M$-graded ring $A$.
+
+We will denote by $\mathcal{F}_A$ the set of all relevant homogeneous multiplicative subsets of $A$ which are finitely generated as submonoids of $(A,\times)$.
+
+\begin{block}{Construction (Proj as glueing potions)}
+
+Let
+$\mathcal{F} \subset \mathcal{F}_A$ be a subset.
+ For each $S \in \mathcal{F}$, let $D_{\dagger}(S)$ be the spectrum of the potion $A_{(S)}$. 
+ If $S,T \in \mathcal{F}$, the affine scheme $D_{\dagger}(ST)$ identifies canonically with an open subscheme of $D_{\dagger}(S)$. For each $S,T \in \mathcal{F}$, we have equalities
+ \[
+ D_{\dagger}({S S}) = D_{\dagger}(S) \quad \text{and} \quad D_{\dagger}({ST})=D_{\dagger}({TS}).
+ \]
+ Moreover, for each triple $S,T,U \in \mathcal{F}$, we have
+ \[
+ D_{\dagger}({ST} )\cap D_{\dagger}({SU}) = D_{\dagger}({TS}) \cap D_{\dagger}({TU}).
+ \]
+
+Now, by glueing, from these data we obtain a scheme $\mathrm{Proj}^M_{\mathcal{F} } (A)$ and, for each $S \in \mathcal{F}$, an open immersion $\varphi_S : D_{\dagger}(S) \to \mathrm{Proj}^M_{\mathcal{F}} (A)$, such that
+\[
+\mathrm{Proj}^M_{\mathcal{F} } (A) = \bigcup_{S \in \mathcal{F} } \varphi_S( D_{\dagger}(S)).
+\]
+
+In practice, we will often identify $D_{\dagger}(S) $ and $\varphi_S (D_{\dagger}(S))$. 
+
+
+In the case when $\mathcal{F} = \mathcal{F}_A$,
+ the scheme $\mathrm{Proj}^M_{\mathcal{F}_A} (A)$ will be denoted $\mathrm{Proj}^M(A)$, or just $\mathrm{Proj}( A)$ when $M$ is clear from the context.
+ \end{block}
+
+ \end{frame}
+
+
+
+
+\begin{frame}
+
+\begin{block}{Proposition} 
+The scheme $\mathrm{Proj}^M(A)$ is quasi-separated.
+\end{block}
+
+\begin{block}{Proposition (Functoriality of Proj)} 
+Let $\Psi:A \to B $ be a homomorphism of $M$-graded rings. 
+For any $\mathcal{F} \subset \mathcal{F}_A$ 
+we have a canonical morphism of schemes $\mathrm{Proj}^M_{\Psi (\mathcal{F})} (B) \to \mathrm{Proj}^M_{\mathcal{F} } (A)$. Moreover, for any $S \in \calF$ we have
+\begin{equation}
+\mathrm{Proj}^M_{\Psi(\calF)}(B) \times_{\mathrm{Proj}_{\calF}^M(A)} D_\dag(S) = D_\dag(\Psi(S));
+\end{equation}
+in particular, the morphism is affine.
+\end{block}
+
+\begin{block}{Proposition}
+Assume that $\Psi : A \to B$ is surjective. Then we have $\mathrm{Proj}^M_{\Psi (\mathcal{F}_A)} (B) = \mathrm{Proj}^M (B)$, and the canonical morphism
+ $\mathrm{Proj}^M(B) \to \mathrm{Proj}^M(A)$
+is a closed immersion.
+\end{block}
+
+ \end{frame}
+
+
+\begin{frame}
+
+\begin{block}{Proposition}
+ Let $M$ and $M'$ be two finitely generated abelian groups. Let $R$ be a commutative ring and let $A$ (resp.~$A'$) be a commutative $M$-graded (resp.~$M'$-graded) $R$-algebra. 
+ Then for the natural $(M \times M')$-grading on $A \otimes_R A'$, we have a canonical isomorphism
+ \[
+ \mathrm{Proj} ^{M \times M'} (A \otimes_R A') \cong \mathrm{Proj} ^M (A) \times_{\Spec(R)} \mathrm{Proj} ^{M'} (A'). 
+ \]
+\end{block}
+
+\end{frame}
+
+
+
+\begin{frame}{Quasi-coherent sheaves}
+
+Let $Q$ be an $M$-graded $A$-module. For any homogeneous multiplicative subset $S \subset A$, we have considered the $A_{(S)}$-module $Q_{(S)}$. The following fact is immediate by glueing of quasi-coherent sheaves.
+
+
+\begin{block}{Definition}
+There exists 
+a unique quasi-coherent $\mathcal{O}_{\mathrm{Proj}^M(A)}$-module $\widetilde{Q}$ such that
+$\Gamma \bigl( D_\dag(S)  , \widetilde{Q} \bigr) = Q_{(S)}$
+for every $S \in \calF_A$.
+\end{block}
+
+An $M$-graded $A$-module $Q$ will be called \emph{negligible} if $\widetilde{Q}=0$.
+
+
+\end{frame}
+
+
+\begin{frame}{Twisting sheaves}
+
+We now define the versions in our setting of the twisting sheaves. 
+If $Q$ is a graded $A$-module and $\alpha \in M$, we will denote by $Q(\alpha)$ the $M$-graded $A$-module which coincides with $M$ as an $A$-module, but with the $M$-grading defined by $(Q(\alpha))_\beta = Q_{\alpha+\beta}$ for $\beta \in M$.
+
+
+\begin{block}{Definition (Twisting sheaves)}
+Let $\alpha \in M$.
+\begin{enumerate}
+\item
+The quasi-coherent sheaf $\widetilde{A(\alpha)}$ on $\mathrm{Proj}^M(A)$ is 
+denoted $\mathcal{O}_{\mathrm{Proj}^M(A)} (\alpha)$.
+\item
+If $\calQ$ is a sheaf of $\calO_{\mathrm{Proj}^M(A)}$-modules, we set $\calQ (\alpha) = \calO_{\mathrm{Proj}^M(A)} (\alpha ) \otimes_{\calO_{\mathrm{Proj}^M(A)}} \calQ$.
+\end{enumerate}
+\end{block}
+
+
+\begin{block}{Proposition}
+Assume that $A$ is a noetherian ring.
+\begin{enumerate}
+\item
+For any $\alpha \in M$, the quasi-coherent sheaf $\mathcal{O}_{\mathrm{Proj}^M(A)} (\alpha)$ is coherent.
+\item
+If $Q$ is a finitely generated $M$-graded $A$-module, then $\widetilde{Q}$ is coherent.
+\end{enumerate}
+\end{block}
+
+
+\end{frame}
+
+\begin{frame}
+
+A family $S \in \calF_A$ will be called \emph{maximally relevant} if $M[\underline{S}]=M$.   We will denote by $\calF_A^{\mathrm{m}} \subset \calF_A$ the subset consisting of maximally relevant families. In this subsection we will explore various consequences of the following condition (which may or may not hold, depending on $A$):
+\begin{equation}
+\label{eqn:cover-max}
+\mathrm{Proj}^M(A) = \bigcup_{S \in \calF_A^{\mathrm{m}}} D_\dag(S).
+\end{equation}
+
+
+\begin{block}{Proposition}
+Assume that~\eqref{eqn:cover-max} is satisfied. Then for any $ \alpha \in M$, the quasi-coherent $\calO_{\mathrm{Proj}^M(A)}$-module $\calO_{\mathrm{Proj}^M(A)} (\alpha)$ is an invertible sheaf.
+\end{block}
+
+\begin{block}{Proposition}
+Assume that~\eqref{eqn:cover-max} is satisfied, and moreover that $\mathrm{Proj}^M(A)$ is quasi-compact. Then the functor
+\[
+\mathsf{L} : \mathrm{Mod}^M(A) / \mathrm{Mod}^M(A)_{\mathrm{neg}} \to \mathrm{QCoh}(\mathrm{Proj}^M(A))
+\]
+is an equivalence of categories.
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}{Example: Flag variety as Proj}
+ Let $k$ be an algebraically closed field and let $G$ be
+a connected reductive group scheme over $k.$ Let $T$ be a maximal split torus
+and $B$ be a Borel subgroup such that $B = T N$ where $N$ is the unipotent
+radical. Then $G/N$ is quasi-affine and the ring $A := \Gamma (G/N, \mathcal{O}_{G/N} )$ is canonically $X^*(T)$-graded. We have a schematically dominant open immersion
+$G/N \to \mathrm{Spec}(A)$. 
+
+\begin{block}{Proposition}
+The flag variety $G/B$ identifies with $\mathrm{Proj}^{X^*(T)} (A)$.
+\end{block}
+Consider a finite-dimensional $G$-module $\widetilde{V}$ and a $B$-stable subspace $V \subset \widetilde{V}$. 
+We can then consider the induced scheme
+\[
+ G \times^{B} V,
+\]
+i.e.~the quotient of the product $G \times V$ by the (free) action of $B$ defined by $b \cdot (g,x) = (gb^{-1}, b \cdot x)$.  It is a vector bundle over $G/B$.
+
+There is a canonical way to see such schemes as Proj schemes.
+
+An interesting case is when $\widetilde{V}$ is the Lie algebra $\mathfrak{g}$ of $G$ and $V$ is the Lie algebra $\mathfrak{n}$ of the unipotent radical of $B$. In this case, $G \times^{B} V$ is the so-called \emph{Springer resolution}
+
+\end{frame}
+
+
+\begin{frame}{Conclusion}
+
+
+\begin{tabular}{|l|c|r|}
+  \hline
+  \textbf{Property of the Proj construction} & Grothendieck setting  & Brenner-Schröer setting \\
+  \hline
+  Grading & $\bbN $ & \text{any f.g. ab. gp $M$} \\
+  \hline
+  Definition via prime ideals works & Yes & No\\
+   \hline
+  Definition via prime ideals required & No & No\\
+  \hline
+  Definition via glueing works & Yes & Yes\\
+  \hline 
+  Glueing steps required & Yes & Yes \\ 
+  \hline
+  Twsiting sheaves available & Yes & Yes \\ 
+  \hline
+ Compatible with tensor product & No & Yes \\ 
+  \hline
+  Separated & Yes & No, but quasi-separated \\
+  \hline 
+  Compatible with blowups & Yes & Yes \\
+  \hline 
+  Allows to describe G/B canonically  & No & Yes \\
+  \hline 
+  Qcoh on Proj via graded modules   & Yes & Yes \\
+  \hline 
+  Verified in Lean    & Yes & Yes \\
+  \hline 
+\end{tabular}
+
+$~~$
+
+$~~$
+
+Moreover: 
+
+The level of technicality in the Grothendieck setting is almost the same as that in the Brenner–Schröer setting.
+
+\end{frame}
+
+
+
+\begin{frame}{Lean4 Formalization}
+
+In our joint work on the formalization we formalized: 
+\begin{enumerate}
+\item Localization of graded rings and potions
+
+\item Magic of potions 
+
+\item The definition of Proj via glueing 
+
+\item Twisting modules
+\end{enumerate}
+We plan to formalize:
+
+\begin{enumerate} \item Existence of blowups via Proj and dilatations 
+\item Quasi-coherent sheaves on Proj
+\end{enumerate}
+
+
+
+We use much of the material on the formalization of scheme theory available in mathlib (Buzzard et al.).
+Previously, Jujian Zhang formalized the $\mathbb{N}$-graded $\mathrm{Proj}$ construction, and we use a lot of graded algebras from this work. 
+
+
+
+ Though the multi-graded Proj construction generalises the $\mathbb{N}$-graded one, the formalisation remains indepdenent because we used the gluing approach instead of the graded ideals approach. 
+
+ It would also be very interesting to formalise some aspects of group schemes, in particular to formalize the description of the flag variety via Proj schemes.
+
+\end{frame}
+
+
+
+
+\begin{frame}{Various remarks}
+\begin{itemize}
+
+  
+  \item In the long run, we expect formalised mathematics to become the new standard. This will be the starting point for non-hallucinating, AI-powered advanced mathematical research.
+  
+  \item It would be very exciting to see advance in AI-automated formalisation.
+  
+  \item It would be very interesting to see a more PDF\LaTeX-friendly interface  in Lean (cf. the power of good notations in mathematics). In practice the Lean code sometimes becomes hard to read in comparison with a math formula (as in \LaTeX codes).
+     \LaTeX $\leadsto$ PDF  ,      Lean4 $\not \leadsto$ PDF 
+  
+  \item As of Spring 2025, Copilot (Lean AI) remained insufficiently effective for assisting with the formalisation of algebraic geometry. Copilot was not able to prove that 0x1=0 in a certain non-trivial graded ring (the underlying set was already formally defined and we were formalising that it is a ring). However Copilot was able to fill by himself repetitive arguments. With more and more formalised works and current AI-research, Copilot will improve and be able to prove routine like 0x1=0 soon. 
+  
+  \item As of Spring 2025, without J. Zhang's collaboration, it would have been impossible for me (I had no experience with Lean before) to reach the formalisation of the multigraded Proj construction in such a short time. However, as a joint project, we encountered no significant difficulties and completed the formalisation of Proj before the paper was accepted.
+  
+  \item Future human mathematicians will learn Lean like previous ones used to learn \LaTeX. 
+\end{itemize}
+
+
+\end{frame}
+
+
+\section{Implementation in Lean4}
+\begin{frame}
+\title{Implementation in Lean4}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+Thanks for listening
+\end{center}
+\end{frame}
+
+\end{document} 

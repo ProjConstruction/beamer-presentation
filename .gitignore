@@ -1,0 +1,54 @@
+# LaTeX intermediate and output files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.xdv
+*.lof
+*.lot
+
+# Editor backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+# PDF output
+*.pdf
+
+# MacOS files
+.DS_Store
+
+# VSCode settings
+.vscode/
+
+# latexmk generated files
+latexmkrc
+
+# Other
+*.dvi
+*.ps
+*.glg
+*.glo
+*.gls
+*.ist
+*.acn
+*.acr
+*.alg
+*.run.xml
+*.bcf
+*.cut
+*.loa
+*.lol
+*.mw
+*.nlo
+*.nls
+*.synctex(busy)
