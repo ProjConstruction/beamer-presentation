@@ -1,0 +1,31 @@
+name: Build LaTeX PDF
+
+on:
+  push:
+    paths:
+      - 'main.tex'
+      - '.github/workflows/latex-pdf.yml'
+  pull_request:
+    paths:
+      - 'main.tex'
+      - '.github/workflows/latex-pdf.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up TeX Live
+        uses: teatimeguest/setup-texlive-action@v2
+
+      - name: Compile LaTeX document
+        run: |
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-pdf
+          path: main.pdf
