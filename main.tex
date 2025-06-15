@@ -22,6 +22,31 @@
 \usepackage[nice]{nicefrac}
 \usepackage{dsfont, stmaryrd}
 \usepackage{array}
+
+\usepackage{listings}
+\usepackage{lstautogobble}
+\usepackage{lstlinebgrd}
+
+\usepackage{xcolor}
+\definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
+\definecolor{tacticcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
+\definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+\definecolor{attributecolor}{rgb}{0.7, 0.1, 0.1} % red
+\def\lstlanguagefiles{lstlean.tex}
+% set default language
+\lstset{
+  language=lean, 
+  basicstyle=\ttfamily,
+  autogobble=true,
+  escapeinside={(*@}{@*)},
+  captionpos=t,
+  aboveskip=0.5em,
+  belowskip=0.5em}
+
+\usepackage{mymacros}
+
 \newcommand{\nc}{\newcommand}
 \newtheorem{prop}[theorem]{Proposition}
 
@@ -645,9 +670,141 @@ Previously, Jujian Zhang formalized the $\mathbb{N}$-graded $\mathrm{Proj}$ cons
 
 
 \section{Implementation in Lean4}
-\begin{frame}
-\title{Implementation in Lean4}
+\begin{frame}[fragile]
+\frametitle{Graded objects in Lean4}
+
+\begin{lstlisting}[mathescape=true, extendedchars=true]
+variable {A M ιA ιM σA σM : Type*} 
+variable [Ring A] [AddCommGroup M] [Module A M]
+variable ($\mathcal{A}$ : ιA → σA) ($\mathcal{M}$ : ιM → σM)
+variable [DecidableEq ιA] [AddMonoid ιA] [DecidableEq ιM]  [VAdd ιA ιM]
+variable [SetLike σA A] [SetLike σM M]
+variable [AddSubgroupClass σA A] [AddSubgroupClass σM M] 
+variable [GradedRing $\mathcal{A}$] 
+variable [DirectSum.Decomposition $\mathcal{M}$] [SetLike.GradedSMul $\mathcal{A}$ $\mathcal{M}$]
+\end{lstlisting}
+\begin{itemize}
+  \item \lstinline|[SetLike σA A]| and \lstinline|[AddSubgroupClass σA A]| together assert that the terms of \lstinline|σA| are subgroups of $A$.
+%   \item<2> \lstinline[mathescape=true]|[GradedRing $\mathcal{A}$]| is an abbreviation for \lstinline[mathescape=true]|[DirectSum.Decomposition $\mathcal{A}$]| and 
+% \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{A}$]| where \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{\McA}$]| is an abbreviation for 
+% \lstinline[mathescape=true]|[SetLike.GradedOne $\mcA$]| asserting that $1$ has grade zero and \lstinline[mathescape=true]|[SetLike.GradedMul $\mcA$]| asserting that $\mcA_i\mcA_j \subseteq \mcA_{i+j}$.
+%   \item<3> \lstinline[mathescape=true]|[SetLike.GradedSMul $\mcA$ $\mcM$]| asserts that $\mcA_i \cdot \mcM_j \subseteq \mcM_{i+j}$ where $i + j$ is provided by \lstinline|[VAdd ιA ιM]|. 
+%   \item<4> The general setup here is versatile: by allowing \lstinline|ιA| and \lstinline|ιM| to be different types, we can have graded rings and modules that are not graded by the same monoid --- for example the ring is graded by $\NN$ and the module by $\ZZ$.
+\end{itemize}
 \end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Graded objects in Lean4}
+
+\begin{lstlisting}[mathescape=true, extendedchars=true]
+variable {A M ιA ιM σA σM : Type*} 
+variable [Ring A] [AddCommGroup M] [Module A M]
+variable ($\mathcal{A}$ : ιA → σA) ($\mathcal{M}$ : ιM → σM)
+variable [DecidableEq ιA] [AddMonoid ιA] [DecidableEq ιM]  [VAdd ιA ιM]
+variable [SetLike σA A] [SetLike σM M]
+variable [AddSubgroupClass σA A] [AddSubgroupClass σM M] 
+variable [GradedRing $\mathcal{A}$] 
+variable [DirectSum.Decomposition $\mathcal{M}$] [SetLike.GradedSMul $\mathcal{A}$ $\mathcal{M}$]
+\end{lstlisting}
+\begin{itemize}
+  % \item<1> \lstinline|[SetLike σA A]| and \lstinline|[AddSubgroupClass σA A]| together assert that the terms of \lstinline|σA| are subgroups of $A$.
+  \item\lstinline[mathescape=true]|[GradedRing $\mathcal{A}$]| is an abbreviation for \lstinline[mathescape=true]|[DirectSum.Decomposition $\mathcal{A}$]| and 
+\lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{A}$]| where \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{\McA}$]| is an abbreviation for 
+\lstinline[mathescape=true]|[SetLike.GradedOne $\mcA$]| asserting that $1$ has grade zero and \lstinline[mathescape=true]|[SetLike.GradedMul $\mcA$]| asserting that $\mcA_i\mcA_j \subseteq \mcA_{i+j}$.
+  % \item<3> \lstinline[mathescape=true]|[SetLike.GradedSMul $\mcA$ $\mcM$]| asserts that $\mcA_i \cdot \mcM_j \subseteq \mcM_{i+j}$ where $i + j$ is provided by \lstinline|[VAdd ιA ιM]|. 
+  % \item<4> The general setup here is versatile: by allowing \lstinline|ιA| and \lstinline|ιM| to be different types, we can have graded rings and modules that are not graded by the same monoid --- for example the ring is graded by $\NN$ and the module by $\ZZ$.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Graded objects in Lean4}
+
+\begin{lstlisting}[mathescape=true, extendedchars=true]
+variable {A M ιA ιM σA σM : Type*} 
+variable [Ring A] [AddCommGroup M] [Module A M]
+variable ($\mathcal{A}$ : ιA → σA) ($\mathcal{M}$ : ιM → σM)
+variable [DecidableEq ιA] [AddMonoid ιA] [DecidableEq ιM]  [VAdd ιA ιM]
+variable [SetLike σA A] [SetLike σM M]
+variable [AddSubgroupClass σA A] [AddSubgroupClass σM M] 
+variable [GradedRing $\mathcal{A}$] 
+variable [DirectSum.Decomposition $\mathcal{M}$] [SetLike.GradedSMul $\mathcal{A}$ $\mathcal{M}$]
+\end{lstlisting}
+\begin{itemize}
+%   \item<1> \lstinline|[SetLike σA A]| and \lstinline|[AddSubgroupClass σA A]| together assert that the terms of \lstinline|σA| are subgroups of $A$.
+%   \item<2> \lstinline[mathescape=true]|[GradedRing $\mathcal{A}$]| is an abbreviation for \lstinline[mathescape=true]|[DirectSum.Decomposition $\mathcal{A}$]| and 
+% \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{A}$]| where \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{\McA}$]| is an abbreviation for 
+% \lstinline[mathescape=true]|[SetLike.GradedOne $\mcA$]| asserting that $1$ has grade zero and \lstinline[mathescape=true]|[SetLike.GradedMul $\mcA$]| asserting that $\mcA_i\mcA_j \subseteq \mcA_{i+j}$.
+  \item \lstinline[mathescape=true]|[SetLike.GradedSMul $\mcA$ $\mcM$]| asserts that $\mcA_i \cdot \mcM_j \subseteq \mcM_{i+j}$ where $i + j$ is provided by \lstinline|[VAdd ιA ιM]|. 
+  % \item The general setup here is versatile: by allowing \lstinline|ιA| and \lstinline|ιM| to be different types, we can have graded rings and modules that are not graded by the same monoid --- for example the ring is graded by $\NN$ and the module by $\ZZ$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Graded objects in Lean4}
+
+\begin{lstlisting}[mathescape=true, extendedchars=true]
+variable {A M ιA ιM σA σM : Type*} 
+variable [Ring A] [AddCommGroup M] [Module A M]
+variable ($\mathcal{A}$ : ιA → σA) ($\mathcal{M}$ : ιM → σM)
+variable [DecidableEq ιA] [AddMonoid ιA] [DecidableEq ιM]  [VAdd ιA ιM]
+variable [SetLike σA A] [SetLike σM M]
+variable [AddSubgroupClass σA A] [AddSubgroupClass σM M] 
+variable [GradedRing $\mathcal{A}$] 
+variable [DirectSum.Decomposition $\mathcal{M}$] [SetLike.GradedSMul $\mathcal{A}$ $\mathcal{M}$]
+\end{lstlisting}
+\begin{itemize}
+%   \item<1> \lstinline|[SetLike σA A]| and \lstinline|[AddSubgroupClass σA A]| together assert that the terms of \lstinline|σA| are subgroups of $A$.
+%   \item<2> \lstinline[mathescape=true]|[GradedRing $\mathcal{A}$]| is an abbreviation for \lstinline[mathescape=true]|[DirectSum.Decomposition $\mathcal{A}$]| and 
+% \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{A}$]| where \lstinline[mathescape=true]|[SetLike.GradedMonoid $\mathcal{\McA}$]| is an abbreviation for 
+% \lstinline[mathescape=true]|[SetLike.GradedOne $\mcA$]| asserting that $1$ has grade zero and \lstinline[mathescape=true]|[SetLike.GradedMul $\mcA$]| asserting that $\mcA_i\mcA_j \subseteq \mcA_{i+j}$.
+  % \item \lstinline[mathescape=true]|[SetLike.GradedSMul $\mcA$ $\mcM$]| asserts that $\mcA_i \cdot \mcM_j \subseteq \mcM_{i+j}$ where $i + j$ is provided by \lstinline|[VAdd ιA ιM]|. 
+  \item The general setup here is versatile: by allowing \lstinline|ιA| and \lstinline|ιM| to be different types, we can have graded rings and modules that are not graded by the same monoid --- for example the ring is graded by $\NN$ and the module by $\ZZ$.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Graded Ring Homomorphisms}
+\begin{lstlisting}[]
+structure GradedRingHom extends RingHom A B where
+  map_mem' : ∀ {i} {x : A}, 
+    x ∈ 𝒜 i → toFun x ∈ ℬ i
+
+scoped[Graded] infix:25 "→+*" => GradedRingHom
+\end{lstlisting}
+
+For a graded ring homomorphism $f : A \to B$, we define the corresponding ring homomorphism $\bigoplus_{i\in\iota}\mcA_i \to \bigoplus_{i\in\iota}\mcB_i$ by
+\[
+f_{\oplus} : \begin{tikzcd}[column sep=huge]
+  \bigoplus_{i\in\iota} \mcA_i \arrow[r, "\decompose"] & A \arrow[r, "f"] & B \arrow[r, "\recompose"] & \bigoplus_{i\in\iota} \mcB_i.
+\end{tikzcd}
+\]
+\begin{lstlisting}
+def directSum (f : 𝒜 →+* ℬ) : (⨁ i, 𝒜 i) →+* (⨁ i, ℬ i) :=
+  RingHom.comp (DirectSum.decomposeRingEquiv ℬ) <| 
+    f.comp (DirectSum.decomposeRingEquiv 𝒜).symm
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Graded Ring Isomorphisms and Graded Algebra Homomorphisms etc.}
+\begin{lstlisting}[extendedchars=true]
+structure GradedRingEquiv extends RingEquiv A B where
+  map_mem' : ∀ {i : ι} {x : A}, x ∈ 𝒜 i → toFun x ∈ ℬ i
+  inv_mem' : ∀ {i : ι} {y : B}, y ∈ ℬ i → invFun y ∈ 𝒜 i
+
+scoped[Graded] infix:25 "≃+*" => GradedRingEquiv
+
+structure GradedAlgHom extends A →ₐ[R] B, GradedRingHom 𝒜 ℬ
+
+scoped[Graded] notation:25 𝒜 " →ₐ[" R "] " ℬ => 
+  GradedAlgHom (R := R) 𝒜 ℬ
+\end{lstlisting}
+\end{frame}
+
 
 \begin{frame}
 \begin{center}

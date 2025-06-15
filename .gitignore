@@ -52,3 +52,5 @@ latexmkrc
 *.nlo
 *.nls
 *.synctex(busy)
+
+*.vrb

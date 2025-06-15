@@ -1,0 +1,153 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mymacros}[2025/05/18 My macros for my thesis]
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{cleveref}
+\RequirePackage{refcount}
+
+\newcommand{\lean}{\textsf{Lean4}}
+\newcommand{\Lean}{\textsf{Lean4}}
+\newcommand{\leanthree}{\textsf{Lean3}}
+\newcommand{\Leanthree}{\textsf{Lean3}}
+\newcommand{\mathlib}{\textsf{mathlib}}
+
+\newcommand{\nat}{\ensuremath{\mathbb{N}}}
+\newcommand{\NN}{\ensuremath{\mathbb{N}}}
+\newcommand{\ZZ}{\ensuremath{\mathbb{Z}}}
+\newcommand{\QQ}{\ensuremath{\mathbb{Q}}}
+\newcommand{\RR}{\ensuremath{\mathbb{R}}}
+\newcommand{\CC}{\ensuremath{\mathbb{C}}}
+
+\newcommand{\ox}{\ensuremath{\otimes}}
+
+\newcommand{\Ox}{\ensuremath{\bigotimes}}
+
+\DeclareMathOperator{\tor}{Tor}
+\DeclareMathOperator{\Tor}{Tor}
+% \DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\HH}{\mathbf{H}}
+\DeclareMathOperator{\hh}{\mathbf{H}}
+\DeclareMathOperator{\LL}{\mathbf{L}} % left derived
+\DeclareMathOperator{\RD}{\mathbf{R}} % right derived
+\DeclareMathOperator{\gal}{Gal}
+
+\newcommand{\len}{\ell}
+
+\DeclareMathOperator{\twist}{twist}
+\DeclareMathOperator{\comp}{comp}
+\DeclareMathOperator{\cross}{\mathfrak{C}}
+
+\newcommand{\mfa}{\mathfrak{a}}
+\newcommand{\mfb}{\mathfrak{b}}
+\newcommand{\mfc}{\mathfrak{c}}
+
+
+\newcommand{\McA}{\mathcal{A}}
+\newcommand{\McB}{\mathcal{B}}
+\newcommand{\McL}{\mathcal{L}}
+\newcommand{\McR}{\mathcal{R}}
+\newcommand{\McZ}{\mathcal{Z}}
+\newcommand{\McO}{\mathcal{O}}
+\newcommand{\McF}{\mathcal{F}}
+
+\newcommand{\mcA}{\mathcal{A}}
+\newcommand{\mcB}{\mathcal{B}}
+\newcommand{\mcL}{\mathcal{L}}
+\newcommand{\mcR}{\mathcal{R}}
+\newcommand{\mcZ}{\mathcal{Z}}
+\newcommand{\mcM}{\mathcal{M}}
+\newcommand{\mcO}{\mathcal{O}}
+\newcommand{\mcF}{\mathcal{F}}
+
+\newcommand{\mcC}{\ensuremath{\mathcal{C}}}
+\newcommand{\mcD}{\ensuremath{\mathcal{D}}}
+
+\DeclareMathOperator{\Ch}{\matbf{Ch}}
+
+\newcommand{\mfm}{\ensuremath{\mathfrak{m}}}
+\newcommand{\mfn}{\ensuremath{\mathfrak{n}}}
+\newcommand{\mfp}{\ensuremath{\mathfrak{p}}}
+\newcommand{\mfq}{\ensuremath{\mathfrak{q}}}
+
+\DeclareMathOperator{\im}{\ensuremath{im}}
+\DeclareMathOperator{\coker}{\ensuremath{coker}}
+
+\newcommand{\id}{\ensuremath{\mathsf{id}}}
+
+\newcommand{\sfM}{\ensuremath{\mathsf{M}}}
+
+\newcommand{\quotient}[2]{%
+  \left.%
+    \raisebox{0.8ex}{$#1$}%
+    \!\middle/%
+    \!\raisebox{-0.8ex}{$#2$}%
+  \right.%
+}
+
+\DeclareMathOperator{\mat}{Mat}
+\DeclareMathOperator{\Mat}{Mat}
+
+
+\DeclareMathOperator{\MOD}{\mathfrak{Mod}}
+
+\DeclareMathOperator{\centralizer}{\mathbf{C}}
+\DeclareMathOperator{\centre}{\mathbf{Z}}
+
+\DeclareMathOperator{\End}{End}
+
+\newcommand{\opp}{\mathsf{opp}}
+
+\DeclareMathOperator{\diag}{diag}
+
+\DeclareMathOperator{\conj}{conj}
+
+\DeclareMathOperator{\CSA}{\mathsf{C}\!\mathsf{S}\!\mathsf{A}}
+\DeclareMathOperator{\csa}{\mathsf{C}\!\mathsf{S}\!\mathsf{A}}
+
+\DeclareMathOperator{\Br}{Br}
+\DeclareMathOperator{\br}{Br}
+
+\newcommand{\decompose}{\ensuremath{\mathtt{decomp}}}
+\newcommand{\recompose}{\ensuremath{\mathtt{recomp}}}
+
+\newcommand{\hloc}[2]{%
+{#1}_{\left(#2\right)}
+}
+
+\newcommand{\hloca}[2]{%
+\hloc{#1}{#2}
+}
+
+% \DeclareMathOperator{\Proj}{\ensuremath{Proj}}
+% \DeclareMathOperator{\proj}{\ensuremath{Proj}}
+% \DeclareMathOperator{\Spec}{\ensuremath{Spec}}
+\DeclareMathOperator{\spec}{\ensuremath{Spec}}
+
+\newcommand{\rad}[1]{%
+\sqrt{#1}
+}
+
+\DeclareMathOperator{\potion}{\ensuremath{\upvartheta}}
+% \DeclareMathOperator{\potion}{\ensuremath{\text{\faFlask}}}
+
+\newcommand{\leanmath}[1]{%
+\ensuremath{{\footnotesize{\mathtt{#1}}}}}
+
+\newcommand{\sfs}{\ensuremath{\mathsf{s}}}
+
+\newcommand{\overbar}[1]{\mkern 1.6mu\overline{\mkern-1.6mu#1\mkern-1.6mu}\mkern 1.6mu}
+
+\newcommand{\mybar}[1]{\ensuremath{\overbar{#1}}}
+
+\newcommand{\notimplemented}{\textbf{Not written yet!}}
+
+\newcommand{\scrF}{\ensuremath{\mathscr{F}}}
+
+\DeclareMathOperator{\sky}{Sky}
+
+\DeclareMathOperator{\colim}{colim}
+
+\newcommand{\od}{\ensuremath{\mathsf{od}}}
+
+\endinput
