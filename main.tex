@@ -877,6 +877,58 @@ def LocalizationGrading (i : ι) :
 \end{frame}
 
 \begin{frame}[fragile]
+  \frametitle{Homogeneous Localization}
+\begin{itemize}
+
+  \item Let $R$ be a commutative ring and $A$ a commutative graded $R$-algebra. Let $x$ be a submonoid of $A$. 
+  \item In general, unless $x$ contains only homogeneous elements, the localized ring $A_x$ is not graded.
+  \item However, we can still investigate set $A_{(x)}$ of elements of degree zero in the localized ring. 
+\end{itemize}
+
+Consider the type $\mathcolorbox{yellow!10}{P}$ of triples of $(i, a, b)$ where $a$ and $b$ are 
+  homogeneous elements of the degree $i$ and $b$ is in $x$, we have a function $\mathcolorbox{blue!10}{\mathsf{frac} : P \to A_{x}}$ defined by
+  $(i, a, b) \mapsto =\frac a b$.
+  We define the homogeneous localization $A_{(x)}$ to be the quotient $\quotient{P}{\sim}$ where \sethlcolor{red!10}\hl{two pairs $p$ and $q$
+  are equivalent if and only if $\mathsf{frac}(p) = \mathsf{frac}(q)$}. 
+  The function $\mathsf{frac}$ descends to an embedding $\mathcolorbox{green!10}{\iota: \hloca A{\mfp} \hookrightarrow A_{\mfp}}$.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Homogeneous Localization}
+\begin{lstlisting}[linebackgroundcolor={%
+  \ifnum\value{lstnumber}=1\color{yellow!10}\fi
+  \ifnum\value{lstnumber}=2\color{yellow!10}\fi
+  \ifnum\value{lstnumber}=3\color{yellow!10}\fi
+  \ifnum\value{lstnumber}=4\color{yellow!10}\fi
+  \ifnum\value{lstnumber}=6\color{blue!10}\fi
+  \ifnum\value{lstnumber}=7\color{blue!10}\fi
+  \ifnum\value{lstnumber}=8\color{blue!10}\fi
+  \ifnum\value{lstnumber}=13\color{green!10}\fi
+  \ifnum\value{lstnumber}=14\color{green!10}\fi
+  \ifnum\value{lstnumber}=15\color{green!10}\fi},
+  mathescape=true, caption={Homogeneous Localization}]
+structure NumDenSameDeg where
+  deg : ι
+  (num den : 𝒜 deg)
+  den_mem : (den : A) ∈ x
+
+def embedding (p : NumDenSameDeg 𝒜 x) : 
+    Localization x :=
+  Localization.mk p.num ⟨p.den, p.den_mem⟩
+
+def HomogeneousLocalization : Type _ :=
+  Quotient <| (*@\sethlcolor{red!10}\hl{Setoid.ker <| embedding $\mcA$ x}@*)
+
+def val (y : HomogeneousLocalization 𝒜 x) : 
+    Localization x :=
+  Quotient.liftOn' y (embedding 𝒜 x) ...
+\end{lstlisting}
+
+Why not just use a subring of $A_x$? 
+\end{frame}
+
+
+\begin{frame}[fragile]
   \frametitle{Graded Tensor Products}
 \begin{itemize}
   \item 
