@@ -46,6 +46,9 @@
   belowskip=0.5em}
 
 \usepackage{mymacros}
+\usepackage{soul}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{theorems, skins, breakable}
 
 \newcommand{\nc}{\newcommand}
 \newtheorem{prop}[theorem]{Proposition}
@@ -805,6 +808,94 @@ scoped[Graded] notation:25 𝒜 " →ₐ[" R "] " ℬ =>
 \end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]
+  \frametitle{Localized Graded Rings}
+  Let $S$ be a homogeneous submonoid of $A$. 
+  Let $\mathcolorbox{yellow!10}{P_i}$ denote the set of qudraples $(a, b, d_a, d_b)$ where $d_a$ and $d_b$ are in $\iota$ such that $d_a - d_b = i$, 
+$a \in A$ is homogeneous of degree $d_a$ and $b \in S$ is homogeneous of degree $d_b$.
+For each $i \in \iota$, we give $P_i$ a group structure by: 
+\begin{itemize}
+  \item The zero element is $(0, 1, 0, 0)$.
+  \item The result of adding $(a, b, d_a, d_b)$ and $(a', b', d_{a'}, d_{b'})$ is defined as
+$(ab' + a'b, bb', d_a + d_{a'}, d_b + d_{b'})$.
+  \item The negation of $(a, b, d_a, d_b)$ is defined as $(-a, b, d_a, d_b)$.
+\end{itemize}
+Hence, we have \sethlcolor{red!10}\hl{a group homomorphism $\mathsf{frac}: P_i \to A_{S}$ defined by $(a, b, d_a, d_{b}) \mapsto \frac{a}{b}$}.
+Consider the quotient formed by $\quotient{P_{i}}{\sim}$ where \sethlcolor{green!10}\hl{two quadruples $p$ and $q$ are equivalent if and only if $\mathsf{frac}(p) = \mathsf{frac}(q)$}.
+We take \sethlcolor{olive!10}\hl{the $i$-th grading $A_{S,i}$ of $A_S$ to be the range of the group homomorphism} \sethlcolor{purple!15}\hl{$\mathsf{frac} : \quotient{P_{i}}{\sim} \to A_{S}$}.
+
+\end{frame}
+
+
+\begin{frame}[fragile, allowframebreaks]
+  \frametitle{Localized Graded Rings}
+\begin{lstlisting}[linebackgroundcolor={%
+  \ifnum\value{lstnumber}=10\color{red!10}\fi
+  \ifnum\value{lstnumber}=11\color{red!10}\fi
+  \ifnum\value{lstnumber}=12\color{red!10}\fi
+  \ifnum\value{lstnumber}=13\color{red!10}\fi
+  \ifnum\value{lstnumber}=14\color{red!10}\fi
+  % \ifnum\value{lstnumber}=15\color{red!10}\fi
+  \ifnum\value{lstnumber}=16\color{green!10}\fi
+  \ifnum\value{lstnumber}=17\color{green!10}\fi
+  % \ifnum\value{lstnumber}=19\color{green!10}\fi
+  \ifnum\value{lstnumber}=19\color{purple!15}\fi
+  \ifnum\value{lstnumber}=20\color{purple!15}\fi
+  \ifnum\value{lstnumber}=21\color{purple!15}\fi
+  % \ifnum\value{lstnumber}=24\color{purple!15}\fi
+  \ifnum\value{lstnumber}=23\color{olive!10}\fi
+  \ifnum\value{lstnumber}=24\color{olive!10}\fi
+  \ifnum\value{lstnumber}=25\color{olive!10}\fi
+}, caption={Grading of localized rings}]
+structure (*@\sethlcolor{yellow!10}\hl{PreLocalizationGrading}@*) (i : ι) where
+  num : A
+  den : S.toSubmonoid
+  degNum : ι
+  degDen : ι
+  num_mem : num ∈ 𝒜 degNum
+  den_mem : (den : A) ∈ 𝒜 degDen
+  deg_frac_eq : degNum - degDen = i
+
+def val (i : ι) : 
+    (S.PreLocalizationGrading i) →+ Localization S.toSubmonoid where
+  toFun x := Localization.mk x.num x.den
+  map_zero' := Localization.mk_zero 1
+  map_add' := by simp [Localization.add_mk]
+
+def addCon (i : ι) : AddCon (S.PreLocalizationGrading i) := 
+  AddCon.ker (val S i)
+
+def emb (i : ι) : 
+    (addCon S i).Quotient →+ Localization S.toSubmonoid :=
+  AddCon.lift _ (val ..) le_rfl
+
+def LocalizationGrading (i : ι) : 
+    AddSubgroup (Localization S.toSubmonoid) := 
+  (PreLocalizationGrading.emb S i).range
+\end{lstlisting} 
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Graded Tensor Products}
+\begin{itemize}
+  \item 
+  Let $A$ and $B$ be graded $R$-algebras where $A$ is graded by $\iota_{A}$ and $B$ is graded by $\iota_B$.
+  \item 
+  For any $i \in \iota_A$ and $j \in \iota_B$, the $(i,j)$-th graded piece of the tensor product $A \ox_R B$ is the 
+  $A_i \ox_R B_j$. 
+  \item 
+  Since type theoretically, we need $A_i \ox_R B_j$ as a submodule of $A \ox_R B$, we use the range 
+  of the linear map $A_i \ox_R B_j \to A \ox_R B$.
+\end{itemize}
+  \begin{lstlisting}[caption={Graded Tensor Product}]
+noncomputable def gradingByProduct : 
+    ιA × ιB → Submodule R (A ⊗[R] B) := fun p ↦ 
+  LinearMap.range (TensorProduct.map (𝒜 p.1).subtype (ℬ p.2).subtype)
+
+scoped infix:min "⊗" => gradingByProduct
+  \end{lstlisting}
+\end{frame}
 
 \begin{frame}
 \begin{center}
