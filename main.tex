@@ -1189,6 +1189,182 @@ theorem IsOpenImmersion.of_isRelevant_FG
 
 \end{frame}
 
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+
+Now, we restrict our attention to relevant and finitely generated homogeneous submonoids; we call such submonoids \emph{good potion ingredients}.
+\begin{lstlisting}[caption={Good potion ingredients}]
+structure GoodPotionIngredient extends (HomogeneousSubmonoid 𝒜) where
+  relevant : toHomogeneousSubmonoid.IsRelevant
+  fg : toSubmonoid.FG
+\end{lstlisting}
+For any three good potion ingredients $R, S, T$, we view $\potion(RST)$ as a $\potion(S)$-algebra via the ring homomorphism
+$\potion(S) \to \potion(S(RT)) \to \potion(RST)$.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+  We have a $\potion(S)$-algebra isomorphism $e: \potion(ST) \ox_R \potion(SR) \cong \potion(RST)$ by 
+  composing the following isomorphisms:
+\begin{itemize}
+  \item $\potion(ST) \ox_{\potion(S)} \potion(SR) \cong A_{\sfs(T')} \ox_{\potion(S)} A_{\sfs(R')}$
+  \begin{lstlisting}
+def mixingAux₀ :
+    (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃ₐ[S.Potion]
+    (Localization T'.genSubmonoid) ⊗[S.Potion] 
+    (Localization R'.genSubmonoid) :=
+  Algebra.TensorProduct.congr
+    (S.localizationAlgEquivPotion T').symm
+    (S.localizationAlgEquivPotion R').symm
+  \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+  We have a $\potion(S)$-algebra isomorphism $e: \potion(ST) \ox_R \potion(SR) \cong \potion(RST)$ by 
+  composing the following isomorphisms:
+\begin{itemize}
+  \item $A_{\sfs(T')} \ox_{\potion(S)} A_{\sfs(R')} \cong A_{\sfs(T')\sfs(R')}$
+  \begin{lstlisting}
+def mixingAux₁ {R S T : GoodPotionIngredient 𝒜}
+    (R' : PotionGen S.1 R.1) (T' : PotionGen S.1 T.1) :
+    (Localization T'.genSubmonoid) ⊗[S.Potion] 
+    (Localization R'.genSubmonoid) ≃ₐ[S.Potion]
+    Localization (T'.genSubmonoid * R'.genSubmonoid) :=
+  Localization.mulEquivTensor _ _ |>.symm
+  \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+  We have a $\potion(S)$-algebra isomorphism $e: \potion(ST) \ox_R \potion(SR) \cong \potion(RST)$ by 
+  composing the following isomorphisms:
+\begin{itemize}
+  \item $A_{\sfs(T')\sfs(R')} \cong A_{\sfs(T'\oplus R')}$
+  \begin{lstlisting}
+def mixingAux₂ {R S T : GoodPotionIngredient 𝒜}
+    (R' : PotionGen S.1 R.1) (T' : PotionGen S.1 T.1) :
+    Localization (T'.genSubmonoid * R'.genSubmonoid) ≃ₐ[S.Potion]
+    Localization (T'.disjUnion R').genSubmonoid :=
+  Localization.equivEq 
+    (PotionGen.disjUnion_genSubmonoid T' R').symm
+  \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+  We have a $\potion(S)$-algebra isomorphism $e: \potion(ST) \ox_R \potion(SR) \cong \potion(RST)$ by 
+  composing the following isomorphisms:
+\begin{itemize}
+  \item $A_{\sfs(T'\oplus R')} \cong \potion(S(TR))$
+    \begin{lstlisting}
+def mixingAux₃ {R S T : GoodPotionIngredient 𝒜}
+    (R' : PotionGen S.1 R.1) (T' : PotionGen S.1 T.1) :
+    Localization (T'.disjUnion R').genSubmonoid ≃ₐ[S.Potion]
+    (S * (T * R)).Potion :=
+  S.localizationAlgEquivPotion (T'.disjUnion R')
+  \end{lstlisting}
+
+  \item $\potion(S(TR)) \cong \potion(RST)$
+  \begin{lstlisting}
+def mixingAux₄ (R S T : GoodPotionIngredient 𝒜) :
+    (S * (T * R)).Potion ≃ₐ[S.Potion] (R * S * T).Potion :=
+  AlgEquiv.ofRingEquiv (f := potionEquiv ...) ...
+  \end{lstlisting}
+
+\item   \begin{lstlisting}[]
+def mixing : 
+    (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃ₐ[S.Potion] (R * S * T).Potion :=
+  mixingAux₀ R' T' |>.trans <| mixingAux₁ R' T' |>.trans <| mixingAux₂ R' T' |>.trans <|
+  mixingAux₃ R' T' |>.trans <| mixingAux₄ R S T
+  \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+  We have a $\potion(S)$-algebra isomorphism $e: \potion(ST) \ox_R \potion(SR) \cong \potion(RST)$ by 
+  composing the following isomorphisms:
+\begin{itemize}
+\item   \begin{lstlisting}[]
+def mixing : 
+    (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃ₐ[S.Potion] (R * S * T).Potion :=
+  mixingAux₀ R' T' |>.trans <| mixingAux₁ R' T' |>.trans <| mixingAux₂ R' T' |>.trans <|
+  mixingAux₃ R' T' |>.trans <| mixingAux₄ R S T
+  \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+With the same construction, we have an isomorphism 
+$$\potion(RS) \ox_{\potion(R)} \potion(RT) \cong \potion(TRS) \cong \potion(RST).$$
+Hence, we have an isomorphism
+$$t'_{RST}: \potion(ST)\ox_{\potion(S)}\potion(SR) \cong \potion(RS) \ox_{\potion(R)} \potion(RT).$$
+
+\begin{lstlisting}[extendedchars=true]
+def t'Aux₀ (R S T : GoodPotionIngredient 𝒜) :
+    (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃+* (R * S * T).Potion :=
+  mixing (finitePotionGen S.relevant R.fg) (finitePotionGen S.relevant T.fg)
+
+def t'Aux₁ (R S T : GoodPotionIngredient 𝒜) :
+    (R * S).Potion ⊗[R.Potion] (R * T).Potion ≃+* (R * S * T).Potion :=
+  (mixing (finitePotionGen R.relevant T.fg) (finitePotionGen R.relevant S.fg)).toRingEquiv.trans <|
+    potionEquiv (by rw [mul_comm T, mul_assoc, mul_comm T, ← mul_assoc])
+
+def t' (R S T : GoodPotionIngredient 𝒜) :
+    ((S * T).Potion ⊗[S.Potion] (S * R).Potion) ≃+*
+    ((R * S).Potion ⊗[R.Potion] (R * T).Potion) :=
+  (t'Aux₀ R S T).trans (t'Aux₁ R S T).symm
+\end{lstlisting} 
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+\begin{corollary}
+For any three good potion ingredients $R, S, T$, $t'_{TRS} \circ t'_{STR}\circ t'_{RST}$ is the identity isomorphism.
+\end{corollary}
+
+\begin{lstlisting}
+lemma t'_cocycle (R S T : GoodPotionIngredient 𝒜) :
+    (T.t' R S).trans ((S.t' T R).trans (R.t' S T))  = RingEquiv.refl _ := 
+  ...
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mixing Potions}
+\begin{corollary}{}{t-prime-fac-ring-version}
+For any three good potion ingredients $R, S, T$, the following diagram commutes:
+\[
+\begin{tikzcd}
+\potion(SR) \arrow[r, "1\ox\bullet"] \arrow[rd, "\cong", "\leanmath{potionEquiv}"'] & 
+\potion(ST) \ox_{\potion(S)} \potion(SR) \arrow[r, "t'_{RST}"] & \potion(RS) \ox_{\potion(R)} \potion(RT) \\
+& \potion(RS) \arrow[ru, "1\ox\bullet"]& 
+\end{tikzcd}.
+\]
+\end{corollary}
+
+
+\begin{lstlisting}
+lemma t'_fac (R S T : GoodPotionIngredient 𝒜) :
+    ((R.t' S T)).toRingHom.comp Algebra.TensorProduct.includeRight.toRingHom =
+    Algebra.TensorProduct.includeLeftRingHom.comp
+      (potionEquiv <| by rw [mul_comm]).toRingHom := 
+  ...
+\end{lstlisting}
+\end{frame}
+
 \begin{frame}
 \begin{center}
 Thanks for listening
