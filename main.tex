@@ -1365,6 +1365,166 @@ lemma t'_fac (R S T : GoodPotionIngredient 𝒜) :
 \end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]
+  \frametitle{Glueing}
+Let $\mathscr{F} = \left\{ S_i \middle| i \in \tau \right\}$ be a family of good potion ingredients of $A$ indexed by $\tau$. We aim to glue the family of schemes
+together $\left\{ \spec \potion\left( S_i \right) \middle| i \in \tau \right\}$.
+To proceed with the gluing, we need the following data:
+\begin{itemize}
+  \item<1-> an indexing type $J$;
+  \item<2-> a scheme ${U_i}$ for each ${i} \in J$;
+  \item<3-> a scheme ${V_{ij}}$ for each pair ${(i,j)\in J\times J}$ representing the intersection of ${U_i}$ and ${U_j}$;
+  \item<4-> an open immersion of schemes $f_{ij} : V_{ij} \to U_i$ for each pair ${(i,j)\in J\times J}$ such that $f_{ii}$ is an isomorphism;
+  \item<5-> a morphism of schemes $t'_{ijk} : V_{ij} \times_{U_i} V_{ik} \to V_{jk} \times_{U_j} V_{ji}$ such that for each triple ${(i,j,k)\in J\times J\times J}$,
+  the composition
+  \begin{equation}
+    \label{t-prime-cocycle-condition}
+    \begin{tikzcd}
+      V_{ij} \times_{U_i} V_{ik} \arrow[r, "t'_{ijk}"]&
+      V_{jk} \times_{U_j} V_{ji} \arrow[r, "t'_{jki}"]& 
+      V_{ki} \times_{U_k} V_{kj} \arrow[r, "t'_{kij}"]& 
+      V_{ij} \times_{U_i} V_{ik} 
+    \end{tikzcd}
+  \end{equation}
+  is the identity map;
+  \item<6-> a transition map $t_{ij} : V_{ij} \to V_{ji}$ for each pair ${(i,j)\in J\times J}$ such that $t_{ii}$ is the identity map, and
+  for each triple ${(i,j,k)\in J\times J\times J}$, the following diagram commutes:
+  \begin{equation}
+    \label{t-fac-condition}
+    \begin{tikzcd}
+      V_{ij} \times_{U_i} V_{ik} \arrow[r, "p_1"] \arrow[rd, "t'_{ijk}"'] & V_{ij} \arrow[r, "t_{ij}"] & V_{ji}\\
+      & V_{jk} \times_{U_j} V_{ji} \arrow[ru, "p_2"'] &
+    \end{tikzcd}.
+  \end{equation}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Glueing}
+Let $\mathscr{F} = \left\{ S_i \middle| i \in \tau \right\}$ be a family of good potion ingredients of $A$ indexed by $\tau$. We aim to glue the family of schemes
+together $\left\{ \spec \potion\left( S_i \right) \middle| i \in \tau \right\}$.
+In our case:
+\begin{itemize}
+  \item indexing type $J = \tau$;
+  \item schemes $U_i = \spec \potion{S_i}$ for each ${i} \in \tau$;
+  \item schemes ${V_{ij}} = {\spec\potion{S_i S_j}}$ for each pair ${(i,j)\in \tau\times \tau}$;
+  \item open immersions of schemes $f_{ij} = \spec \left(\potion(S_i) \to \potion\left( S_i S_j \right)\right)$;
+  \item morphisms of schemes $t'_{ijk}$ to be the composition
+\[
+\begin{tikzcd}
+\spec\left( \potion\left( S_i S_j \right) \right) \times_{\spec\left( S_i \right)} \spec\left( \potion\left( S_j S_k \right) \right) \arrow[r, "\cong"] &
+\spec\left( \potion\left( S_i S_j \right) \ox_{\potion\left( S_i \right)} \potion\left( S_j S_k \right)\right) \arrow[d, "\spec\left( t'_{S_i S_j S_k} \right)", "\cong"']& \\
+\spec\left( \potion\left( S_j S_k \right) \right) \times_{\spec\left( S_j \right)} \spec\left( \potion\left( S_j S_i \right) \right) &
+\spec\left( \potion\left( S_j S_k \right) \ox_{\potion\left( S_j \right)} \potion\left( S_j S_i \right)\right) \arrow[l, "\cong"']
+\end{tikzcd},
+\]
+  \item transition maps $t_{ij} = \spec\left( \potion\left( S_i S_j \right) \to \potion\left( S_j S_i \right) \right)$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Glueing}
+Let $\mathscr{F} = \left\{ S_i \middle| i \in \tau \right\}$ be a family of good potion ingredients of $A$ indexed by $\tau$. We aim to glue the family of schemes
+together $\left\{ \spec \potion\left( S_i \right) \middle| i \in \tau \right\}$.
+In our case:
+
+\begin{lstlisting}[extendedchars=true, basicstyle=\ttfamily\footnotesize]
+def glueData {τ : Type u} (ℱ : τ → GoodPotionIngredient 𝒜) : Scheme.GlueData where
+  J := τ
+  U i := Spec <| CommRingCat.of <| (ℱ i).Potion
+  V pair := Spec <| CommRingCat.of <| (ℱ pair.1 * ℱ pair.2).Potion
+  f i j := Spec.map <| CommRingCat.ofHom <| (ℱ i).potionToMul (ℱ j).toHomogeneousSubmonoid
+  f_id i := ...
+  f_open i j := isOpenImmersion (ℱ i) (ℱ j)
+  t i j := Spec.map <| CommRingCat.ofHom <|  potionEquiv (mul_comm ..) |>.toRingHom
+  t_id i := by
+    erw [← Scheme.Spec.map_id]
+    simp
+  t' i j k :=
+      (AlgebraicGeometry.pullbackSpecIso _ _ _).hom ≫
+      Spec.map (CommRingCat.ofHom <| t' (ℱ i) (ℱ j) (ℱ k)) ≫
+      (AlgebraicGeometry.pullbackSpecIso _ _ _).inv
+  t_fac i j k := by
+    ... -- after some simplifications
+    exact t'_fac (ℱ i) (ℱ j) (ℱ k)
+  cocycle i j k := by
+    ... -- after some simplifications
+    simpa using congr($(t'_cocycle (ℱ i) (ℱ j) (ℱ k)) x)
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Customizing the delaborator}
+It is common to a set of good potion ingredients instead of a family $\mathscr{F}$ indexed by some type $\tau$.
+\begin{lstlisting}
+variable (F : Set (GoodPotionIngredient 𝒜))
+example : true := by
+  let e₁ := Proj (τ := F) Subtype.val
+  -- e₁ : Scheme := Proj Subtype.val
+  let e₂ := Proj (τ := GoodPotionIngredient 𝒜) id
+  -- e₂ : Scheme := Proj id
+  rfl
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Customizing the delaborator}
+\begin{itemize}
+  \item We make a new option to toggle on and off.
+\begin{lstlisting}
+register_option proj_pp : Bool :=
+{ defValue := false,
+descr := "pretty print `Proj`" }
+
+def getPPProj (o : Options) : Bool := o.get proj_pp.name false
+
+\end{lstlisting}
+
+\item Then we check if $\mathscr{F}$ is a set
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+@[app_delab GoodPotionIngredient.Proj]
+def proj_delab : Delab :=
+  whenPPOption getPPProj <|
+  whenPPOption getPPNotation <|
+  whenNotPPOption getPPAnalysisSkip <|
+  withOptionAtCurrPos `pp.analysis.skip true do
+    let e ← getExpr
+    guard <| e.isAppOfArity ``GoodPotionIngredient.Proj 12
+    let set? := (e.getArg! 10).coeTypeSet?
+    match set? with
+    | some _ =>
+    let optionsPerPos ← withNaryArg 7 do
+      return (← read).optionsPerPos.setBool (← getPos) `pp.analysis.namedArg true
+    let optionsPerPos ← withNaryArg 10 do
+      return optionsPerPos.setBool (← getPos) `pp.analysis.namedArg true
+    ...
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Customizing the delaborator}
+It is common to a set of good potion ingredients instead of a family $\mathscr{F}$ indexed by some type $\tau$.
+\begin{lstlisting}
+variable (F : Set (GoodPotionIngredient 𝒜))
+set_option proj_pp true in
+example : true := by
+  let e₁ := Proj (𝒜 := 𝒜) (τ := F) Subtype.val
+  -- e₁ : Scheme := Proj (𝒜 := 𝒜) (τ := ↑F) Subtype.val
+  let e₂ := Proj (𝒜 := 𝒜) (τ := GoodPotionIngredient 𝒜) id
+  -- e₂ : Scheme := Proj (𝒜 := 𝒜) (τ := GoodPotionIngredient 𝒜) id
+  rfl
+\end{lstlisting}
+\end{frame}
+
+
 \begin{frame}
 \begin{center}
 Thanks for listening
