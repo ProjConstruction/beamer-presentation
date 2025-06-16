@@ -16,7 +16,8 @@
 \usepackage{amscd}
 \usepackage{wasysym}  
 \usepackage{tikz}
-\usepackage{tikz-cd}
+\usetikzlibrary{cd, external, decorations.pathmorphing, fit, backgrounds, tikzmark, calc, shapes.misc, positioning}
+
 \usepackage{appendix}
 \usepackage{geometry}
 \usepackage[nice]{nicefrac}
@@ -49,6 +50,8 @@
 \usepackage{soul}
 \usepackage[most]{tcolorbox}
 \tcbuselibrary{theorems, skins, breakable}
+% \usepackage{MnSymbol}
+\usepackage{upgreek}
 
 \newcommand{\nc}{\newcommand}
 \newtheorem{prop}[theorem]{Proposition}
@@ -947,6 +950,25 @@ noncomputable def gradingByProduct :
 
 scoped infix:min "⊗" => gradingByProduct
   \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Potions}
+\begin{itemize}
+  \item<1-> 
+  Let $A$ be a commutative $R_0$-algebra that is graded by an abelian group $\iota$. 
+  \item For any homogeneous submonoid $S \subseteq A$, we define the potion $\potion(S)$ to be the 
+  homogeneous localization $\hloc A S$.
+  \item<2-> If $\phi : A \to B$ is a graded ring homomorphism there is a ring homomorphism
+  $\leanmath{potionToMap}: \potion(S) \to \potion\left(\phi_{\star} S\right)$ induced by $\phi$.
+  \item<3-> If $S = T$ are two homogeneous submonoids of $A$, we have a ring isomorphism $\leanmath{potionEquiv}: \potion(S) \cong \potion(T)$.
+  % In particular, since $S S = S$, we have a ring isomorphism $\potion(S)\cong \potion(SS)$.
+  \item<4-> There is a ring homomorphism $\leanmath{potionToMul}:\potion(S) \to \potion(ST)$,
+  with this ring homomorphism $\leanmath{potionToMul}$, we view $\potion(ST)$ as a $\potion(S)$-algebra.
+  \item<5-> There is a ring isomorphism $\leanmath{equivBarPotion}: \potion(S) \cong \potion\left( \mybar{S} \right)$ induced by $\id_A$. This is \cref{eqn:isom-localizations} restricted to the zeroth degree.
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
