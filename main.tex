@@ -28,6 +28,7 @@
 \usepackage{lstautogobble}
 \usepackage{lstlinebgrd}
 
+\usepackage{bbm}
 \usepackage{xcolor}
 \definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
 \definecolor{tacticcolor}{rgb}{0.0, 0.1, 0.6}    % blue
@@ -1524,6 +1525,176 @@ example : true := by
 \end{lstlisting}
 \end{frame}
 
+
+\begin{frame}[fragile]
+\frametitle{Enlarging Families of Good Potion Ingredients}
+
+  Suppose $\mathscr{F}$ and $\mathscr{F'}$ are two families of good potion ingredients indexed by $\tau$ and $\tau'$ respectively.
+  We use the notation $\leanmath{le} : \mathscr{F} \le \mathscr{F'}$ to mean an injective function $\leanmath{le} : \tau \to \tau'$ such that $\mathscr{F}'\circ \leanmath{le} = \mathscr{F}$.
+% \end{minipage}\hfill%
+% \begin{minipage}[t]{0.48\textwidth}
+  % \vspace{-2em}
+  \begin{lstlisting}[caption={Comparing two families of good potion ingredients}, basicstyle=\ttfamily\footnotesize]
+structure LE_ where
+  (le : τ ↪ τ')
+  (comp : ℱ' ∘ le = ℱ)
+\end{lstlisting}
+
+Suppose $\leanmath{le}: \mathscr{F} \le \mathscr{F}'$ and $i \in \tau$, we have an isomorphism of rings 
+  $\potion\left( \mathscr{F}'_{\leanmath{le}(i)} \right) \cong \potion\left( \mathscr{F}_i \right)$.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+def LE_.potionEquivMap (le : LE_ ℱ ℱ') (i : τ) : 
+    (ℱ' (le i)).Potion ≃+* (ℱ i).Potion :=
+  potionEquiv (by simp)
+\end{lstlisting}
+Hence, we can glue a family of scheme morphisms
+\[
+\begin{tikzpicture}[remember picture,background rectangle/.style={fill=yellow!10}, show background rectangle]
+\node {
+\begin{tikzcd}[remember picture]
+  \spec \potion\left( \mathscr{F}_i \right) \arrow[r, ""] & 
+  \spec \potion\left( \mathscr{F}'_{\leanmath{le}(i)} \right) \arrow[r, "\iota"] &
+  \proj \mathscr{F}' 
+\end{tikzcd}
+};
+\end{tikzpicture}
+\]
+to form a morphism of schemes $\proj\leanmath{le}: \proj \scrF \to \proj \scrF'$,
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+def projHomOfLE (le : LE_ ℱ ℱ') : Proj ℱ ⟶ Proj ℱ' :=
+  Multicoequalizer.desc _ _
+    (fun i ↦ (*@\sethlcolor{yellow!10}\hl{Spec.map (CommRingCat.ofHom <| le.potionEquivMap i) $\gg$ (glueData $\scrF$').$\iota$ (le i)}@*)) 
+    ...
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Enlarging Families of Good Potion Ingredients}
+The morphism $\proj \leanmath{le}: \proj \scrF \to \proj \scrF'$ is an open immersion.
+\begin{lstlisting}[caption={$\proj\leanmath{le}$ is an open immersion}]
+instance projHomOfLE_isOpenImmersion (le : LE_ ℱ ℱ') : 
+    IsOpenImmersion (projHomOfLE le) := ...
+\end{lstlisting}
+
+This is because the morphism $\proj \leanmath{le}$ is a topological embedding, and the induced morphism on stalks is an isomorphism.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Enlarging Families of Good Potion Ingredients}
+For any family $\scrF = \left\{ S_i \middle| i \in \tau \right\}$ of good potion ingredients, 
+  we denote $\scrF^{+}$ to be the family indexed by the disjoint union of 
+    $\tau$ and $\tau \times \left\{ S \middle| S~\text{is a good potion ingredient} \right\}$
+  \[
+  \begin{aligned}
+    \scrF^{+} :  \tau \oplus \tau \times \left\{ S \middle| S~\text{is a good potion ingredient} \right\} &\to \left\{ S \middle| S~\text{is a good potion ingredient} \right\} \\
+      i &\mapsto \scrF_i \\
+      (i, S) &\mapsto \scrF_i S
+  \end{aligned}.
+  \]
+  We define $\leanmath{le} : \scrF \le \scrF^{+}$ by the left inclusion.
+  \begin{lstlisting}[caption={$\scrF^{+}$ and $\scrF \le \scrF^+$}, extendedchars=true]
+abbrev idealify (ℱ : τ → GoodPotionIngredient 𝒜) :
+    τ ⊕ (τ × GoodPotionIngredient 𝒜) → GoodPotionIngredient 𝒜 :=
+  Sum.rec ℱ (fun p ↦ ℱ p.1 * p.2)
+
+abbrev le_idealify (ℱ : τ → GoodPotionIngredient 𝒜) : LE_ ℱ (idealify ℱ) where
+  le :=
+  { toFun := Sum.inl
+    inj' := Sum.inl_injective }
+  comp := rfl
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Enlarging Families of Good Potion Ingredients}
+\begin{theorem}
+  The morphism $\proj \leanmath{le}: \proj \scrF \to \proj \scrF^{+}$ is an isomorphism.
+\end{theorem}
+  \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+instance proj_iso_proj_idealify : IsIso (projHomOfLE (le_idealify ℱ)) := 
+  apply (config := { allowSynthFailures := true }) AlgebraicGeometry.IsOpenImmersion.to_iso
+  rw [TopCat.epi_iff_surjective]
+  ...
+\end{lstlisting}
+\begin{proof}
+  Since the morphism is an open immersion, we only need to show that topologically, it is surjective.
+  Suppose $x \in \proj \scrF^{+}$, then either $x$ is in $\spec\potion(\scrF_i)$ for some $i \in \tau$ or 
+  $x$ is in $\spec\potion(\scrF_i T)$ for some $i \in \tau$ and some good potion ingredient $T$.
+  In the first case, the preimage of $x$ under $\proj \leanmath{le}$ is the point $x$ itself.
+
+  In the second case, let $T'$ be a potion generator of $T$ over $\scrF_i$, the preimage of $x$ under $\proj \leanmath{le}$ is the pullback of $x$ along the morphism
+\[
+  \begin{tikzcd}
+    \potion(\scrF_i) \arrow[r, "\frac{\bullet}{1}"] & \potion(\scrF_i)_{\mathsf{s}(T')} \arrow[r, "\cong"] & \potion\left( \scrF_i T \right)
+  \end{tikzcd}.
+\]
+\end{proof}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Functoriality}
+
+Let 
+$\Phi : A \to B$ and $\Psi : B \to C$ be $\iota$-graded $R_0$ algebra homomorphisms where $\iota$ is an abelian group.
+
+For each $i \in \tau$, we have a ring homomorphism $\leanmath{potionToMap}: \potion(\scrF_i) \to \potion\left( \Phi_{\star}\scrF_i \right)$.
+  Therefore, we have a family of morphisms of schemes 
+  \[
+\begin{tikzcd}
+\spec{\potion\left( \Phi_{\star}\scrF_i \right)} \arrow[r] & \spec \potion\left( \scrF_i \right) \arrow[r, "\iota"] & \proj \scrF \\
+\end{tikzcd}.
+  \]
+  We can glue these morphisms to form a morphism of schemes $\proj \Phi_{\star}\scrF \to \proj \scrF$.
+
+\begin{lstlisting}
+protected def Proj.map (ℱ : τ → GoodPotionIngredient 𝒜) :
+    Proj ((map Φ) ∘ ℱ) ⟶ Proj ℱ  :=
+  Multicoequalizer.desc _ _
+    (fun (i : τ) ↦ Spec.map (CommRingCat.ofHom ((ℱ i).potionToMap Φ)) ≫ (glueData ℱ).ι i) <| by
+  ...
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Functoriality}
+
+\begin{corollary}
+  $\proj\id_A: \proj \scrF \to \proj \scrF$ is the identity and $\proj(\Psi \circ \Phi) = \proj \Phi \circ \proj \Psi$.
+\end{corollary}
+Since ${\id_A}_{\star}\scrF$ is not \emph{definitionally} equal to $\scrF$, \lstinline|Proj.map (.id 𝒜) ℱ  = 𝟙 _| will not type-check.
+Hence, we use $\proj\leanmath{le}$ to create a morphism $\proj {\id_A}_{\star}\scrF \to \proj \scrF$.
+\begin{lstlisting}[caption={$\proj$ is a contravariant functor}]
+lemma Proj.map_id (ℱ : τ → GoodPotionIngredient 𝒜) :
+    Proj.map (.id 𝒜) ℱ  =
+    projHomOfLE { le := { toFun := id, inj' _ _ h := h }, comp := ... } := by
+  apply Multicoequalizer.hom_ext
+  rintro i
+  rfl
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Functoriality}
+
+\begin{corollary}
+  $\proj\id_A: \proj \scrF \to \proj \scrF$ is the identity and $\proj(\Psi \circ \Phi) = \proj \Phi \circ \proj \Psi$.
+\end{corollary}
+Similarly, since $(\Psi \circ \Phi)_{\star}\scrF$ is not definitionally equal to $\Psi_{\star}\left( \Phi_{\star}\scrF \right)$, we formalise 
+$\proj(\Psi \circ \Phi) = \proj \Phi \circ \proj \Psi$ as follows:
+\begin{lstlisting}
+lemma Proj.map_comp (ℱ : τ → GoodPotionIngredient 𝒜) :
+  Proj.map (Ψ.comp Φ) ℱ =
+  projHomOfLE
+  { le := { toFun := id, inj' _ _ h := h }, comp :=  ...] } ≫ 
+  Proj.map Ψ _ ≫ Proj.map Φ ℱ := ...
+\end{lstlisting}
+In both cases, $\leanmath{le}$ is nothing but the identity function on $\tau$, but nevertheless, 
+$\proj\leanmath{le}$ is not literally the identity map. Hence, set theoretically, we have checked that $\proj$ is a contravriant functor
+from the category of graded ring to the category of schemes; however, type theoretically, we cannot write the functor down, at least not in the current formulation.
+\end{frame}
 
 \begin{frame}
 \begin{center}
