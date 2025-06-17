@@ -804,21 +804,21 @@ def directSum (f : 𝒜 →+* ℬ) : (⨁ i, 𝒜 i) →+* (⨁ i, ℬ i) :=
 
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Graded Ring Isomorphisms and Graded Algebra Homomorphisms etc.}
-\begin{lstlisting}[extendedchars=true]
-structure GradedRingEquiv extends RingEquiv A B where
-  map_mem' : ∀ {i : ι} {x : A}, x ∈ 𝒜 i → toFun x ∈ ℬ i
-  inv_mem' : ∀ {i : ι} {y : B}, y ∈ ℬ i → invFun y ∈ 𝒜 i
+% \begin{frame}[fragile]
+%   \frametitle{Graded Ring Isomorphisms and Graded Algebra Homomorphisms etc.}
+% \begin{lstlisting}[extendedchars=true]
+% structure GradedRingEquiv extends RingEquiv A B where
+%   map_mem' : ∀ {i : ι} {x : A}, x ∈ 𝒜 i → toFun x ∈ ℬ i
+%   inv_mem' : ∀ {i : ι} {y : B}, y ∈ ℬ i → invFun y ∈ 𝒜 i
 
-scoped[Graded] infix:25 "≃+*" => GradedRingEquiv
+% scoped[Graded] infix:25 "≃+*" => GradedRingEquiv
 
-structure GradedAlgHom extends A →ₐ[R] B, GradedRingHom 𝒜 ℬ
+% structure GradedAlgHom extends A →ₐ[R] B, GradedRingHom 𝒜 ℬ
 
-scoped[Graded] notation:25 𝒜 " →ₐ[" R "] " ℬ => 
-  GradedAlgHom (R := R) 𝒜 ℬ
-\end{lstlisting}
-\end{frame}
+% scoped[Graded] notation:25 𝒜 " →ₐ[" R "] " ℬ => 
+%   GradedAlgHom (R := R) 𝒜 ℬ
+% \end{lstlisting}
+% \end{frame}
 
 
 \begin{frame}[fragile]
@@ -940,26 +940,26 @@ Why not just use a subring of $A_x$?
 \end{frame}
 
 
-\begin{frame}[fragile]
-  \frametitle{Graded Tensor Products}
-\begin{itemize}
-  \item 
-  Let $A$ and $B$ be graded $R$-algebras where $A$ is graded by $\iota_{A}$ and $B$ is graded by $\iota_B$.
-  \item 
-  For any $i \in \iota_A$ and $j \in \iota_B$, the $(i,j)$-th graded piece of the tensor product $A \ox_R B$ is the 
-  $A_i \ox_R B_j$. 
-  \item 
-  Since type theoretically, we need $A_i \ox_R B_j$ as a submodule of $A \ox_R B$, we use the range 
-  of the linear map $A_i \ox_R B_j \to A \ox_R B$.
-\end{itemize}
-  \begin{lstlisting}[caption={Graded Tensor Product}]
-noncomputable def gradingByProduct : 
-    ιA × ιB → Submodule R (A ⊗[R] B) := fun p ↦ 
-  LinearMap.range (TensorProduct.map (𝒜 p.1).subtype (ℬ p.2).subtype)
+% \begin{frame}[fragile]
+%   \frametitle{Graded Tensor Products}
+% \begin{itemize}
+%   \item 
+%   Let $A$ and $B$ be graded $R$-algebras where $A$ is graded by $\iota_{A}$ and $B$ is graded by $\iota_B$.
+%   \item 
+%   For any $i \in \iota_A$ and $j \in \iota_B$, the $(i,j)$-th graded piece of the tensor product $A \ox_R B$ is the 
+%   $A_i \ox_R B_j$. 
+%   \item 
+%   Since type theoretically, we need $A_i \ox_R B_j$ as a submodule of $A \ox_R B$, we use the range 
+%   of the linear map $A_i \ox_R B_j \to A \ox_R B$.
+% \end{itemize}
+%   \begin{lstlisting}[caption={Graded Tensor Product}]
+% noncomputable def gradingByProduct : 
+%     ιA × ιB → Submodule R (A ⊗[R] B) := fun p ↦ 
+%   LinearMap.range (TensorProduct.map (𝒜 p.1).subtype (ℬ p.2).subtype)
 
-scoped infix:min "⊗" => gradingByProduct
-  \end{lstlisting}
-\end{frame}
+% scoped infix:min "⊗" => gradingByProduct
+%   \end{lstlisting}
+% \end{frame}
 
 
 \begin{frame}[fragile]
@@ -1287,12 +1287,12 @@ def mixingAux₄ (R S T : GoodPotionIngredient 𝒜) :
   AlgEquiv.ofRingEquiv (f := potionEquiv ...) ...
   \end{lstlisting}
 
-\item   \begin{lstlisting}[]
-def mixing : 
-    (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃ₐ[S.Potion] (R * S * T).Potion :=
-  mixingAux₀ R' T' |>.trans <| mixingAux₁ R' T' |>.trans <| mixingAux₂ R' T' |>.trans <|
-  mixingAux₃ R' T' |>.trans <| mixingAux₄ R S T
-  \end{lstlisting}
+% \item   \begin{lstlisting}[]
+% def mixing : 
+%     (S * T).Potion ⊗[S.Potion] (S * R).Potion ≃ₐ[S.Potion] (R * S * T).Potion :=
+%   mixingAux₀ R' T' |>.trans <| mixingAux₁ R' T' |>.trans <| mixingAux₂ R' T' |>.trans <|
+%   mixingAux₃ R' T' |>.trans <| mixingAux₄ R S T
+%   \end{lstlisting}
 \end{itemize}
 \end{frame}
 
