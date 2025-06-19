@@ -18,8 +18,6 @@
 \usepackage{tikz}
 \usetikzlibrary{cd, external, decorations.pathmorphing, fit, backgrounds, tikzmark, calc, shapes.misc, positioning}
 
-\usepackage{tabularx}
-
 \usepackage{appendix}
 \usepackage{geometry}
 \usepackage[nice]{nicefrac}
@@ -319,7 +317,9 @@ Provide data for future AI-mathematics.
 \end{frame}
 
 
-\begin{frame}{Graded localization}
+\begin{frame} \begin{center}Part I: mathematical background of the multigraded Proj construction\end{center}
+\end{frame}
+\begin{frame}
 If a given commutative ring $A$ is $M$-graded for some abelian group $M$, we will say that a multiplicative subset is homogeneous if it consists of homogeneous elements. 
 
 If $A$ is a commutative $M$-graded ring and $S \subset A$ is a homogeneous multiplicative subset, the localization $A_S$ of $A$ with respect to $S$ is canonically $M$-graded, explicitly, for $m \in M$ we have
@@ -485,7 +485,11 @@ In the case when $\mathcal{F} = \mathcal{F}_A$,
 The scheme $\mathrm{Proj}^M(A)$ is quasi-separated.
 \end{block}
 
-\begin{block}{Proposition (Functoriality of Proj)} 
+\end{frame}
+
+\begin{frame}{Functoriality of Proj}
+
+\begin{block}{Proposition } 
 Let $\Psi:A \to B $ be a homomorphism of $M$-graded rings. 
 For any $\mathcal{F} \subset \mathcal{F}_A$ 
 we have a canonical morphism of schemes $\mathrm{Proj}^M_{\Psi (\mathcal{F})} (B) \to \mathrm{Proj}^M_{\mathcal{F} } (A)$. Moreover, for any $S \in \calF$ we have
@@ -495,7 +499,7 @@ we have a canonical morphism of schemes $\mathrm{Proj}^M_{\Psi (\mathcal{F})} (B
 in particular, the morphism is affine.
 \end{block}
 
-\begin{block}{Proposition}
+\begin{block}{Proposition}{Product}
 Assume that $\Psi : A \to B$ is surjective. Then we have $\mathrm{Proj}^M_{\Psi (\mathcal{F}_A)} (B) = \mathrm{Proj}^M (B)$, and the canonical morphism
  $\mathrm{Proj}^M(B) \to \mathrm{Proj}^M(A)$
 is a closed immersion.
@@ -536,7 +540,7 @@ An $M$-graded $A$-module $Q$ will be called \emph{negligible} if $\widetilde{Q}=
 \end{frame}
 
 
-\begin{frame}{Twisting sheaves}
+\begin{frame}{}
 
 If $Q$ is a graded $A$-module and $\alpha \in M$, we will denote by $Q(\alpha)$ the $M$-graded $A$-module which coincides with $M$ as an $A$-module, but with the $M$-grading defined by $(Q(\alpha))_\beta = Q_{\alpha+\beta}$ for $\beta \in M$.
 
@@ -683,7 +687,7 @@ Previously, Jujian Zhang formalized the $\mathbb{N}$-graded $\mathrm{Proj}$ cons
 
 
 
- Though the multi-graded Proj construction generalises the $\mathbb{N}$-graded one, the formalisations remain independent because we used the gluing approach instead of the graded ideals approach. 
+ Though the multi-graded Proj construction generalises the $\mathbb{N}$-graded one, the formalisations remain independent because we used the glueing approach instead of the graded ideals approach. 
 
 
 \end{frame}
@@ -702,13 +706,19 @@ Previously, Jujian Zhang formalized the $\mathbb{N}$-graded $\mathrm{Proj}$ cons
   
 \item As of Spring 2025, Copilot (Lean AI) remained sometimes helpful but insufficiently effective for assisting with the formalisation of algebraic geometry. Copilot was not able to prove that $0 \times 1 = 0$ in a certain non-trivial graded ring.
 
+\item Formalisation led to new mathematical identities and more precise mathematical definitions. The Lean4 formalisation of multigraded Proj schemes was finished before the mathematical paper was accepted.
+
 \end{itemize}
 
 
 \end{frame}
 
+\begin{frame}
+\begin{center}
+Part II: Implementation in Lean4
+\end{center}
+\end{frame}
 
-\section{Implementation in Lean4}
 \begin{frame}[fragile]
 \frametitle{Graded objects in Lean4}
 
@@ -1403,7 +1413,7 @@ lemma t'_fac (R S T : GoodPotionIngredient 𝒜) :
   \frametitle{Glueing}
 Let $\mathscr{F} = \left\{ S_i \middle| i \in \tau \right\}$ be a family of good potion ingredients of $A$ indexed by $\tau$. We aim to glue the family of schemes
 together $\left\{ \spec \potion\left( S_i \right) \middle| i \in \tau \right\}$.
-To proceed with the gluing, we need the following data:
+To proceed with the glueing, we need the following data:
 \begin{itemize}
   \item<1-> an indexing type $J$;
   \item<2-> a scheme ${U_i}$ for each ${i} \in J$;
@@ -1757,4 +1767,4 @@ Thanks for listening!
 \end{center}
 \end{frame}
 
-\end{document} 
+\end{document}
