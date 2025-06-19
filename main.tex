@@ -1732,17 +1732,22 @@ from the category of graded ring to the category of schemes; however, type theor
   About 8000 lines of code.
     \begin{tabular}{c|c|p{0.5\textwidth}}
       Topic & linum & Content \\ \hline
-      Preliminary results & \~2000 & Homogeneous Submonoids, Graded ring-homomorphism \\\hline
-      \texttt{Grading} & \~2000 & Tensor Product / Localizations/ Twisted Modules \\\hline
-      \texttt{Potions and Glueing} &  \~1300 &  Magic of Potions \\\hline
-      \texttt{Proj} & \~1000 & Enlarging families of Good Potion Ingredients, Functoriality \\\hline
-      For future works & \~1000 & Dilatations, Rees-algebras etc.
+      Preliminary results & \textasciitilde 2000 & Homogeneous Submonoids, Graded ring-homomorphism \\\hline
+      \texttt{Grading} & \textasciitilde 2000 & Tensor Product / Localizations/ Twisted Modules \\\hline
+      \texttt{Potions} and  \texttt{Glueing} &  \textasciitilde 1300 &  Magic of Potions \\\hline
+      \texttt{Proj} & \textasciitilde 1000 & Enlarging families of Good Potion Ingredients, Functoriality \\\hline
+      For future works & \textasciitilde 1000 & Dilatations, Rees-algebras etc.
     \end{tabular}
   \begin{enumerate}
     \item<2-> covering about 400 lines of \LaTeX documents.
     \item<3-> Heuristically, each page of paper translates to about 800 lines of Lean4 code.
-    \item<4-> Because Lean4 code often covers mathematicians' handwaving and type theoretically necessary isomorphisms.
-    \item<5-> Often, these two aspects coincide.
+    \item<4-> Lean4 code often covers type theoretically necessary isomorphisms.
+    \item<5-> Lean4 does not recognize the phrase like ``we identify $A_{(S)}$ and $A_{(\underline{S})}$''.
+    \item<6-> Each time, we had to introduce auxilary isomorphisms, 
+      there is an extra layer to unpack. 
+    \item<7-> For example, in defining $\leanmath{mixing}$, 
+      it might be true that only $\leanmath{mixingAux_{1}}$ has contents. 
+      But we still need to unpack every other isomorphisms whenever we want to use $\leanmath{mixing}$.
   \end{enumerate}
 \end{frame}
 
